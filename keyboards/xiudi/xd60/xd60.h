@@ -2,6 +2,8 @@
 
 #include "quantum.h"
 
+#define PERMISSIVE_HOLD
+
 /* XD60 LEDs
  *   GPIO pads
  *   0 F7 not connected

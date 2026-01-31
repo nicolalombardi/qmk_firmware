@@ -18,9 +18,10 @@
 #define L_BASE 0
 #define L_GAMING 1
 #define L_ARROWS_SYMBOLS 2
-#define L_EXTRA 3
-#define L_GAMING_FN 4
-#define L_NUMBERS 5
+#define L_NUMBERS 3
+#define L_SHIFTED_NUMBERS 4
+#define L_EXTRA 5
+#define L_GAMING_FN 6
 
 // TAP DANCES
 enum {
@@ -38,6 +39,8 @@ enum {
 #define KC_CSF5 LCTL(LSFT(KC_F5))       // Ctrl + Shift + F5
 #define KC_CSF10 LCTL(LSFT(KC_F10))     // Ctrl + Shift + F10
 #define KC_CSL LCTL(LSFT(KC_L))     // Ctrl + Shift + F10
+#define KC_MUTE_MIC LALT(LCTL(LSFT(KC_M))) // Ctrl + Shift + Alt + M
+// #define KC_SWITCH_SPEAKER LALT(LCTL(LSFT(KC_S))) // Ctrl + Shift + Alt + S
 
 #define KC_LDSK LCTL(LGUI(KC_LEFT))     // Move to left desktop
 #define KC_RDSK LCTL(LGUI(KC_RIGHT))    // Move to right desktop
@@ -135,6 +138,21 @@ void accented_letter_u(qk_tap_dance_state_t *state, void *user_data){
     }
 }
 
+enum custom_keycodes { 
+   KC_PASS = SAFE_RANGE
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        switch (keycode) {
+            case KC_PASS:
+                SEND_STRING("ayolmfrz");
+                return false; 
+        }
+    }
+    return true;
+}
+
 qk_tap_dance_action_t tap_dance_actions[] = {
     // Tap once for Right Arrow, Tap twice to toggle the gaming layer
     [TD_RIGHT_GAMINGPROFILE] = ACTION_TAP_DANCE_LAYER_TOGGLE(KC_RGHT, L_GAMING),
@@ -155,8 +173,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // 0: Base Layer
     [L_BASE] = LAYOUT_split_spacebar(
         KC_ESC,   KC_1,     KC_2,      KC_3,  KC_4,  KC_5,  KC_6,  KC_7,  KC_8,  KC_9,     KC_0,     KC_VOLD,    KC_VOLU,   KC_BSPC,
-        KC_TAB,   KC_Q,     KC_W,      KC_E,  KC_R,  KC_T,  KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,     KC_NO,    KC_NO,   KC_BSLS,
-        KC_CAPS,  KC_A,     KC_S,      KC_D,  KC_F,  KC_G,  KC_H,  KC_J,  KC_K,  KC_L,     KC_SCLN,  KC_QUOT,  KC_NO,   KC_ENT,
+        KC_TAB,   KC_Q,     KC_W,      KC_E,  KC_R,  KC_T,  KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,     KC_MUTE_MIC , KC_NO,   KC_BSLS,
+        LT(L_NUMBERS,KC_CAPS),  KC_A,     KC_S,      KC_D,  KC_F,  KC_G,  KC_H,  KC_J,  KC_K,  KC_L,     KC_SCLN,  KC_QUOT,  KC_NO,   KC_ENT,
         KC_LSFT,  KC_NO,    KC_Z,      KC_X,  KC_C,  KC_V,  KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,   KC_SLSH,  KC_NO,   KC_RSFT,  KC_UP,
         KC_LCTL,  KC_LGUI,  KC_LALT,       MO(L_ARROWS_SYMBOLS),   KC_SPC,      KC_RCTL,  MO(L_EXTRA),  KC_DEL,  KC_LEFT,  KC_DOWN,  KC_RGHT),
 
@@ -166,17 +184,35 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,     KC_E,  KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O,    KC_P,    KC_LBRC,  KC_RBRC, KC_BSLS,
         KC_CAPS, KC_A,    KC_S,     KC_D,  KC_F, KC_G, KC_H, KC_J, KC_K, KC_L,    KC_SCLN, KC_QUOT,  KC_NO,   KC_ENT,
         KC_LSFT, KC_NO,   KC_Z,     KC_X,  KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  KC_NO,   KC_RSFT, KC_UP,
-        KC_LCTL, KC_LGUI, KC_LALT,         KC_SPC,    MO(L_GAMING_FN),     KC_RCTL, KC_RALT,   KC_DEL,  KC_LEFT, KC_DOWN,  KC_TGRT),
+        KC_LCTL, KC_LGUI, KC_LALT,         KC_SPC,   KC_7  ,MO(L_GAMING_FN),  KC_RALT,   KC_DEL,  KC_LEFT, KC_DOWN,  KC_TGRT),
 
     // 2: Function Layer
     [L_ARROWS_SYMBOLS] = LAYOUT_split_spacebar(
         KC_GRV, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_BSPC,
         KC_TAB, KC_RBRC, KC_RCBR, KC_LCBR, KC_LBRC, KC_F12, KC_NO, KC_HOME, KC_UP, KC_END, KC_NO, KC_NO, KC_NO, KC_NO,
         KC_CAPS, KC_CSL, KC_NO, KC_EQL, KC_MINS, KC_PLUS, KC_UNDS, KC_LEFT, KC_DOWN, KC_RIGHT, KC_MINS, KC_EQL, KC_NO, KC_ENT,
-        KC_LSFT, KC_NO, KC_F12, KC_LDSK, KC_RDSK, KC_TRNS, KC_TRNS, KC_NO, KC_DEL, KC_NO, KC_NO, KC_NO, KC_NO, KC_RSFT, KC_UP,
+        KC_LSFT, KC_NO, KC_PASS, KC_LDSK, KC_RDSK, KC_TRNS, KC_TRNS, KC_NO, KC_DEL, KC_NO, KC_NO, KC_NO, KC_NO, KC_RSFT, KC_UP,
         KC_LCTL, KC_LGUI, KC_LALT,       KC_TRNS, KC_SPC,         KC_RCTL, KC_NO,  KC_DEL,  KC_LEFT, KC_DOWN, KC_TGRT),
 
-    // 3: Extra functions layer and accented letters
+
+    // 3: numbers
+    [L_NUMBERS] = LAYOUT_split_spacebar(
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_7, KC_8, KC_9, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, MO(L_SHIFTED_NUMBERS), KC_TRNS, KC_TRNS, KC_4, KC_5, KC_6, KC_0, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_1, KC_2, KC_3,  KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS,       KC_TRNS, KC_SPC,       KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS),
+
+
+    // 4: shifted numbers (symbols)
+    [L_SHIFTED_NUMBERS] = LAYOUT_split_spacebar(
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LSFT(KC_7), LSFT(KC_8), LSFT(KC_9), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LSFT(KC_4), LSFT(KC_5), LSFT(KC_6), LSFT(KC_0), KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, LSFT(KC_1), LSFT(KC_2), LSFT(KC_3), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
+        KC_TRNS, KC_TRNS, KC_TRNS,       KC_TRNS, KC_SPC,       KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS, KC_TRNS),
+
+    // 5: Extra functions layer and accented letters
     [L_EXTRA] = LAYOUT_split_spacebar(
         QK_BOOT, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
         KC_NO, KC_NO, KC_NO, KC_EACC, KC_NO, KC_NO, KC_NO, KC_UACC, KC_IACC, KC_OACC, KC_NO, KC_NO, KC_NO, KC_NO,
@@ -185,7 +221,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO, KC_NO, KC_NO,       KC_NO, KC_NO,         KC_NO, KC_TRNS,  KC_NO,  KC_NO, KC_NO, KC_NO),
 
 
-    // 4: Function Layer but for gaming mode (no brackets, equal, dash, etc.)
+    // 6: Function Layer but for gaming mode (no brackets, equal, dash, etc.)
     [L_GAMING_FN] = LAYOUT_split_spacebar(
         KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_BSPC,
         KC_TAB,  KC_Q,    KC_W,     KC_E,  KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O,    KC_P,    KC_LBRC,  KC_RBRC, KC_BSLS,
@@ -193,13 +229,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LSFT, KC_NO,   KC_Z,     KC_X,  KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH,  KC_NO,   KC_RSFT, KC_UP,
         KC_LCTL, KC_LGUI, KC_LALT,       KC_TRNS, KC_SPC,         KC_RCTL, KC_NO,  KC_DEL,  KC_LEFT, KC_DOWN, KC_TGRT),
 
-    // 5: top row numbers
-    [L_NUMBERS] = LAYOUT_split_spacebar(
-        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-        KC_NO, LSFT(KC_1), LSFT(KC_2), LSFT(KC_3), LSFT(KC_4), LSFT(KC_5), LSFT(KC_6), LSFT(KC_7), LSFT(KC_8), LSFT(KC_9), LSFT(KC_0), KC_NO, KC_NO, KC_NO,
-        KC_NO, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_NO, KC_NO, KC_NO,
-        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,
-        KC_NO, KC_NO, KC_NO,       KC_NO, KC_NO,         KC_NO, KC_TRNS,  KC_NO,  KC_NO, KC_NO, KC_NO),
+
+
+
 
 
 };
